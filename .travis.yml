@@ -1,0 +1,42 @@
+git:
+  depth: 5
+stages:
+  - "Build and Test"
+  - "Package"
+jobs:
+  include:
+    - stage: "Build and Test"
+      language: java
+      jdk: oraclejdk11
+      before_script:
+        - cd sample-application-backend
+      script:
+        - "mvn clean verify"
+    - stage: "Build and Test"
+      language: node.js
+      node_js: "12.20"
+      before_script:
+        - cd sample-application-frontend
+      script:
+        - echo "NPM install and build"
+        - "npm install"
+    - stage: "Package"
+      before_script:
+        - cd sample-application-backend
+      script:
+        - "docker build -t ID_DOCKERHUB/sample-application-backend ."
+        - "docker login -u ID_DOCKERHUB -p PWD_DOCKERHUB"
+        - "docker push ID_DOCKERHUB/sample-application-backend"
+    - stage: "Package"
+      before_script:
+        - cd sample-application-frontend
+      script:
+        - "docker build -t ID_DOCKERHUB/sample-application-frontend ."
+        - "docker login -u ID_DOCKERHUB -p PWD_DOCKERHUB"
+        - "docker push ID_DOCKERHUB/sample-application-frontend"
+cache:
+  directories:
+    - "$HOME/.m2/repository"
+    - "$HOME/.npm"
+services:
+  - docker
