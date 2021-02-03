@@ -9,27 +9,26 @@ jobs:
       language: java
       jdk: oraclejdk11
       before_script:
-        - cd sample-application-backend
+        - "cd sample-application-backend"
       script:
         - "mvn clean verify"
     - stage: "Build and Test"
       language: node.js
       node_js: "12.20"
       before_script:
-        - cd sample-application-frontend
+        - "cd sample-application-frontend"
       script:
-        - echo "NPM install and build"
         - "npm install"
     - stage: "Package"
       before_script:
-        - cd sample-application-backend
+        - "cd sample-application-backend"
       script:
         - "docker build -t $ID_DOCKERHUB/sample-application-backend ."
         - "docker login -u $ID_DOCKERHUB -p $PWD_DOCKERHUB"
         - "docker push $ID_DOCKERHUB/sample-application-backend"
     - stage: "Package"
       before_script:
-        - cd sample-application-frontend
+        - "cd sample-application-frontend"
       script:
         - "docker build -t $ID_DOCKERHUB/sample-application-frontend ."
         - "docker login -u $ID_DOCKERHUB -p $PWD_DOCKERHUB"
